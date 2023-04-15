@@ -1,0 +1,12 @@
+body {
+  background-color: indigo;
+}
+
+.map-container {
+  margin-top: 2vh;
+  max-width: 100%;
+}
+
+.navbar-custom {
+  background-color: deeppink !important;
+}

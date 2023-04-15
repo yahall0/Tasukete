@@ -10,6 +10,9 @@ Tasukete (助けて)
 7)Users will be able to accept whatever request they choose and the Onegais OP will see the number of volunteers and their names.
 8)Onegais must have contact details (Email, Phone NO)
 9)The users profile page will display their Onegais and the ones they volunteered for.
+10) The requestor can see who volunteered for their request and can set a max number of required volunteers.
+11) Users can be assigned a karma score based on how well they do their duties when volunteering
+
 
 
 saru-mo-ki-kara-ochiru (猿も木から落ちる)
