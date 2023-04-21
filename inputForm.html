@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mapbox Example</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        #map {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mapbox Example</h1>
+    <label for="text-input">Text:</label>
+    <input type="text" id="text-input">
+    <div id="map"></div>
+
+    <script>
+        mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-96, 37.8],
+            zoom: 3
+        });
+
+        map.on('click', function(e) {
+            var coordinates = e.lngLat;
+            // add marker to map at clicked location
+            new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+
+            // get the value of the text input field
+            var text = document.getElementById('text-input').value;
+
+            // create an HTML form and submit it to send the data to your server
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'YOUR_SERVER_URL';
+
+            var lngInput = document.createElement('input');
+            lngInput.type = 'hidden';
+            lngInput.name = 'lng';
+            lngInput.value = coordinates.lng;
+            form.appendChild(lngInput);
+
+            var latInput = document.createElement('input');
+            latInput.type = 'hidden';
+            latInput.name = 'lat';
+            latInput.value = coordinates.lat;
+            form.appendChild(latInput);
+
+            var textInput = document.createElement('input');
+            textInput.type = 'hidden';
+            textInput.name = 'text';
+            textInput.value = text;
+            form.appendChild(textInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        });
+    </script>
+</body>
+</html>

@@ -8,5 +8,13 @@ body {
 }
 
 .navbar-custom {
-  background-color: deeppink !important;
+  background-color: rgb(196, 9, 108) !important;
+  margin-bottom: 2vh;
+}
+
+.profile-img{
+  width:25px;
+  height:25px;
+  border-radius:4rem;
+  margin-top: 0.68rem;
 }
