@@ -18,21 +18,30 @@
 
 <body>
     <%- include('navbar.ejs') %>
+    <% if(info && info.length) { %>
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+          <%= info %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>  
         <div class="container map-container">
             <div id="map" style="width: 100%; height: 85vh; border-radius: 0.5%;"></div>
             <script>
                 const mapboxToken = "<%= mapboxToken %>"
                 const requests = <%- JSON.stringify(requests) %>;
+                let userId = -1
+                <% if (currentUser != null) { %>
+                userId = <%- JSON.stringify(currentUser._id) %>
+                <% } %>
             </script>
             <script src="../scripts/mapboxConfig.js"></script>
             <script>
                 map.on('load', () => {
                     for(let request of requests)
                     {
-                       
                         let markerPopup = new mapboxgl.Popup({offset: 25})
                         .setHTML(`<b>${request.title} </b> by ${request.author.username}`);
-                        const marker = new mapboxgl.Marker()
+                        const marker = new mapboxgl.Marker((userId == request.author._id) ? { color: "red" } : { color: "#5423F6" })
                             .setLngLat([request.longitude,request.latitude])
                             .setPopup(markerPopup)
                             .addTo(map)
@@ -40,6 +49,8 @@
                 })
             </script>
         </div>
+        
+          
 </body>
 
 </html>

@@ -75,6 +75,7 @@ app.use(async (req, res, next) => {
     {
         const user = await User.findOne({googleID: req.user.id})
         res.locals.currentUser = user// Session info of the user from passport
+        console.log(res.locals.currentUser._id)
     }
     res.locals.success = req.flash("success")
     res.locals.error = req.flash("error")
@@ -106,8 +107,12 @@ app.get("/google/logout", (req, res, next) => {
 const mapboxToken = process.env.MAPBOX_TOKEN
 app.get("/", async (req, res) => {
     const requests = await Request.find({}).populate('author')
-    console.log(requests)
-    res.render("home.ejs", {mapboxToken, requests})
+    let info = ""
+    if(req.user != null)
+    {
+        info = "Note: Red Markers are your requests:p"
+    }
+    res.render("home.ejs", {mapboxToken, requests, info})
 })
 
 //New Help request
