@@ -29,7 +29,7 @@ app.engine('ejs', ejsmate)
 app.use(express.static(path.join(__dirname, 'public')))
 
 //connect to mongodb
-/*mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL)
     .then(() => {
         console.log("Connected to mongodb")
     })
@@ -101,7 +101,7 @@ app.get("/google/logout", (req, res, next) => {
         res.redirect("/")
     })
 })
-*/
+
 //homepage    
 const mapboxToken = process.env.MAPBOX_TOKEN
 app.get("/", async (req, res) => {
