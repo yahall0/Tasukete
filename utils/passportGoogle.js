@@ -21,7 +21,6 @@ passport.use(new GoogleStrategy({
     /*User.findOrCreate({ googleId: profile.id }, function (err, user) {
       return done(err, user);
     });*/
-    console.log(profile)
     const user = await User.find({googleID: profile.id})
     if(user.length === 0)
     {

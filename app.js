@@ -14,12 +14,16 @@ const MongoStore = require("connect-mongo")
 const passport = require("passport")
 const User = require("./models/user")
 const flash = require("connect-flash")
+const methodOverride = require("method-override")
 require("./utils/passportGoogle")
+const {isLoggedIn} = require("./utils/middleware")
+const Request = require("./models/request")
 
 
 app = express()
 app.set("view engine", 'ejs')
 app.use(express.urlencoded({ extended: true }))
+app.use(methodOverride("_method"))
 app.set("views", path.join(__dirname, 'views'))
 app.engine('ejs', ejsmate)
 app.use(express.static(path.join(__dirname, 'public')))
@@ -69,7 +73,6 @@ app.use(async (req, res, next) => {
     res.locals.currentUser = null
     if(req.user)
     {
-        console.log(req.user)
         const user = await User.findOne({googleID: req.user.id})
         res.locals.currentUser = user// Session info of the user from passport
     }
@@ -90,7 +93,6 @@ app.get("/oauth2/redirect/google", passport.authenticate('google', {keepSessionI
 )
 
 app.get("/google/logout", (req, res, next) => {
-    console.log(req)
     req.logout(err => {
         if (err) {
             return next(err)
@@ -102,12 +104,33 @@ app.get("/google/logout", (req, res, next) => {
 
 //homepage    
 const mapboxToken = process.env.MAPBOX_TOKEN
-app.get("/", (req, res) => {
-    res.render("home.ejs", {mapboxToken})
+app.get("/", async (req, res) => {
+    const requests = await Request.find({}).populate('author')
+    console.log(requests)
+    res.render("home.ejs", {mapboxToken, requests})
 })
 
 //New Help request
-app.get("/new", )
+//New request forum
+app.get("/new", (req, res) => {
+    res.render("new.ejs", {mapboxToken})
+})
+
+//receive request
+app.post("/new", isLoggedIn, async (req, res) => {
+    const author = await User.findOne({googleID: req.user.id})
+    const newReq = new Request({
+        title: req.body.request.title,
+        longitude: req.body.request.longitude,
+        latitude: req.body.request.latitude,
+        date: req.body.request.date,
+        description: req.body.request.description,  
+        author: author._id
+    })
+    await newReq.save()
+    res.redirect("/")
+})
+
 
 //If page not found
 /*app.all("*", (req, res, next) => {
@@ -117,3 +140,5 @@ app.get("/new", )
 app.listen(6942, () => {
     console.log("Listening on port 6942")
 })
+
+module.exports = app

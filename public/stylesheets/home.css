@@ -1,3 +1,7 @@
+html {
+  margin-right: 0;
+}
+
 body {
   background-color: indigo;
 }
@@ -17,4 +21,15 @@ body {
   height:25px;
   border-radius:4rem;
   margin-top: 0.68rem;
+}
+
+.form-container {
+  background-color: rgba(240, 255, 255, 0.664);
+  width: 70%;
+  border-radius: 10px;
+}
+
+.new-map-container {
+  margin-top: 2vh;
+  width: 100%;
 }
