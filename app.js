@@ -112,7 +112,7 @@ app.get("/", async (req, res) => {
 
 //New Help request
 //New request forum
-app.get("/new", (req, res) => {
+app.get("/new", isLoggedIn, (req, res) => {
     res.render("new.ejs", {mapboxToken})
 })
 
