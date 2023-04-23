@@ -75,7 +75,6 @@ app.use(async (req, res, next) => {
     {
         const user = await User.findOne({googleID: req.user.id})
         res.locals.currentUser = user// Session info of the user from passport
-        console.log(res.locals.currentUser._id)
     }
     res.locals.success = req.flash("success")
     res.locals.error = req.flash("error")
@@ -136,6 +135,19 @@ app.post("/new", isLoggedIn, async (req, res) => {
     res.redirect("/")
 })
 
+//delete a request 
+app.delete("/:requestId/delete", isLoggedIn, async(req, res) => {
+    const request = await Request.findById(req.params.requestId).populate('author')
+    if(req.user.id = request.author._id)
+    {
+        console.log(req.params.requestId)
+        await Request.deleteOne({_id: req.params.requestId})
+        res.redirect("/")
+    }
+    else{
+        res.send("Unauthorised Request")
+    }
+})
 
 //If page not found
 /*app.all("*", (req, res, next) => {
