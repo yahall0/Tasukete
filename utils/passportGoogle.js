@@ -2,6 +2,7 @@ require("dotenv").config
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const User = require("../models/user")
 const passport = require("passport")
+require('https').globalAgent.options.rejectUnauthorized = false;
 
 passport.serializeUser(function (user, done) {
   done(null, user);
