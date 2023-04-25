@@ -121,7 +121,7 @@ app.get("/new", isLoggedIn, (req, res) => {
 })
 
 //receive request
-app.post("/new", async (req, res) => {
+app.post("/new", isLoggedIn,async (req, res) => {
     const author = await User.findOne({googleID: req.user.id})
     const newReq = new Request({
         title: req.body.request.title,
