@@ -121,7 +121,7 @@ app.get("/new", isLoggedIn, (req, res) => {
 })
 
 //receive request
-app.post("/new", isLoggedIn, async (req, res) => {
+app.post("/new", async (req, res) => {
     const author = await User.findOne({googleID: req.user.id})
     const newReq = new Request({
         title: req.body.request.title,
@@ -138,7 +138,9 @@ app.post("/new", isLoggedIn, async (req, res) => {
 //delete a request 
 app.delete("/:requestId/delete", isLoggedIn, async(req, res) => {
     const request = await Request.findById(req.params.requestId).populate('author')
-    if(req.user.id = request.author._id)
+    console.log(req.user.id)
+    console.log(request.author.googleID)
+    if(req.user.id == request.author.googleID)
     {
         console.log(req.params.requestId)
         await Request.deleteOne({_id: req.params.requestId})
