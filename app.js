@@ -18,6 +18,7 @@ const methodOverride = require("method-override")
 require("./utils/passportGoogle")
 const {isLoggedIn} = require("./utils/middleware")
 const Request = require("./models/request")
+const Volunteer = require("./models/volunteer")
 
 
 app = express()
@@ -149,6 +150,24 @@ app.delete("/:requestId/delete", isLoggedIn, async(req, res) => {
     else{
         res.send("Unauthorised Request")
     }
+})
+
+//volunteer for a request
+app.put("/:requestId/volunteer", isLoggedIn, async (req, res) => {
+    const request = await Request.findById(req.params.requestId).populate('author')
+    const user = await User.findOne({googleID: req.user.id})
+    console.log(user)
+    const volunteer = new Volunteer({
+        UserID: user._id,
+        requestId: request._id 
+    })
+    request.volunteers.push(volunteer)
+    user.volunteers.push(volunteer)
+    await request.save()
+    await user.save()
+    await volunteer.save()
+    res.redirect("/")
+
 })
 
 //If page not found

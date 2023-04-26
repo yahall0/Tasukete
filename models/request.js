@@ -25,7 +25,11 @@ const requestSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    volunteers: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Volunteer'
+    }]
 }) 
 
 requestSchema.virtual("properties.popUpMarker").get(function() {

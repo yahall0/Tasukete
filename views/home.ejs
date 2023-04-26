@@ -43,10 +43,16 @@
                             `<form action="/${request._id}/delete?_method=DELETE" method=POST>
                                 <button class="btn btn-danger btn-sm" style="padding: 0.5px;">Delete</button>  
                             </form>` : ``
+                        const volunteerHtml = (userId != request.author._id && userId != -1  )  ? 
+                            `<br>
+                            <form action="/${request._id}/volunteer?_method=PUT" method=POST>
+                                <button class="btn btn-info btn-sm" style="padding: 0.5px;">Volunteer</button>  
+                            </form>` : `` 
                         let markerPopup = new mapboxgl.Popup({offset: 25})
-                        .setHTML(`<b>${request.title} </b> by ${request.author.username} <br>
-                                    Details: ${request.description}`
-                                    + deleteHtml)
+                        .setHTML(`<b>${request.title} </b> by ${request.author.username} <br> 
+                                    Details: ${request.description}<br>
+                                    Volunteers:${request.volunteers.length} <br>`
+                                    + deleteHtml + volunteerHtml)
                         const marker = new mapboxgl.Marker((userId == request.author._id) ? { color: "red" } : { color: "#5423F6" })
                             .setLngLat([request.longitude,request.latitude])
                             .setPopup(markerPopup)
