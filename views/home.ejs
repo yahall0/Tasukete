@@ -47,12 +47,13 @@
                             `<br>
                             <form action="/${request._id}/volunteer?_method=PUT" method=POST>
                                 <button class="btn btn-info btn-sm" style="padding: 0.5px;">Volunteer</button>  
-                            </form>` : `` 
+                            </form>` : ``
+                        const linkHtml = `<a href="/requests/${request._id}">More Info </a>`     
                         let markerPopup = new mapboxgl.Popup({offset: 25})
                         .setHTML(`<b>${request.title} </b> by ${request.author.username} <br> 
                                     Details: ${request.description}<br>
                                     Volunteers:${request.volunteers.length} <br>`
-                                    + deleteHtml + volunteerHtml)
+                                    + deleteHtml + volunteerHtml + linkHtml)
                         const marker = new mapboxgl.Marker((userId == request.author._id) ? { color: "red" } : { color: "#5423F6" })
                             .setLngLat([request.longitude,request.latitude])
                             .setPopup(markerPopup)

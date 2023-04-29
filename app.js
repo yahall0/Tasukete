@@ -115,6 +115,21 @@ app.get("/", async (req, res) => {
     res.render("home.ejs", {mapboxToken, requests, info})
 })
 
+//request page
+app.get("/requests/:requestId", async (req, res) => {
+    const id = req.params.requestId.trim()
+    const request = await Request.findById(id).populate('author').populate(
+        {
+            path: "volunteers",
+            populate: {
+                path: 'UserID',
+                model: 'User'
+            }
+        }
+    );
+    res.render("request.ejs", {mapboxToken, request})
+})
+
 //New Help request
 //New request forum
 app.get("/new", isLoggedIn, (req, res) => {
