@@ -29,6 +29,10 @@ const requestSchema = new mongoose.Schema({
     volunteers: [{
         type: mongoose.Types.ObjectId,
         ref: 'Volunteer'
+    }],
+    reports: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'User'
     }]
 }) 
 
