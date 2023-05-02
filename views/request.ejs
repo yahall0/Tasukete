@@ -17,7 +17,7 @@
 <body>
     <%- include('navbar.ejs') %>
         <div class="row">
-            <div class="col-8 offset-2">
+            <div class="col-6 offset-3">
                 <div class="card mb-3">
                     <a href="<%= `http://www.google.com/maps/place/${request.latitude},${request.longitude}` %>" target="_blank"> <img class="img-fluid" src="<%= `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s-l+000(${request.longitude},${request.latitude})/${request.longitude},${request.latitude}, 14/1000x600?access_token=${mapboxToken}` %>"
                         class="card-img-top"> </a>
