@@ -107,11 +107,12 @@ app.get("/google/logout", (req, res, next) => {
 const mapboxToken = process.env.MAPBOX_TOKEN
 app.get("/", async (req, res) => {
     const requests = await Request.find({}).populate('author')
+    console.log(requests)
     let info = ""
-    if(req.user != null)
+    /*if(req.user != null)
     {
         info = "Note: Red Markers are your requests:p"
-    }
+    }*/
     res.render("home.ejs", {mapboxToken, requests, info})
 })
 
@@ -181,8 +182,13 @@ app.put("/:requestId/volunteer", isLoggedIn, async (req, res) => {
     await request.save()
     await user.save()
     await volunteer.save()
-    res.redirect("/")
+    res.redirect(`/requests/${req.params.requestId}`)
 
+})
+
+//FAQ Page
+app.get("/faq", (req, res) =>  {
+    res.render("faq.ejs")
 })
 
 //If page not found

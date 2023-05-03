@@ -18,52 +18,54 @@
 
 <body>
     <%- include('navbar.ejs') %>
-    <% if(info && info.length) { %>
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-          <%= info %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      <% } %>  
-        <div class="container map-container">
-            <div id="map" style="width: 100%; height: 85vh; border-radius: 0.5%;"></div>
-            <script>
-                const mapboxToken = "<%= mapboxToken %>"
-                const requests = <%- JSON.stringify(requests) %>;
-                let userId = -1
-                <% if (currentUser != null) { %>
-                userId = <%- JSON.stringify(currentUser._id) %>
+        <% if(info && info.length) { %>
+            <div class="alert alert-info alert-dismissible fade show my-alert" style="margin-left: 4vh;" role="alert">
+                <%= info %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <% } %>
+                <div class="container map-container">
+                    <div id="map"
+                        style="width: 100%; height: 90vh; border-radius: 1.25%;box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;">
+                    </div>
+                    <script>
+                        const mapboxToken = "<%= mapboxToken %>"
+                        const requests = <%- JSON.stringify(requests) %>;
+                        let userId = -1
+                            <% if (currentUser != null) { %>
+                                userId = <%- JSON.stringify(currentUser._id) %> 
                 <% } %>
-            </script>
-            <script src="../scripts/mapboxConfig.js"></script>
-            <script>
-                map.on('load', () => {
-                    for(let request of requests)
-                    {
-                        const deleteHtml = (userId == request.author._id) ? 
-                            `<form action="/${request._id}/delete?_method=DELETE" method=POST>
-                                <button class="btn btn-danger btn-sm" style="padding: 0.5px;">Delete</button>  
-                            </form>` : ``
-                        const volunteerHtml = (userId != request.author._id && userId != -1  )  ? 
-                            `<br>
-                            <form action="/${request._id}/volunteer?_method=PUT" method=POST>
-                                <button class="btn btn-info btn-sm" style="padding: 0.5px;">Volunteer</button>  
-                            </form>` : ``
-                        const linkHtml = `<a href="/requests/${request._id}">More Info </a>`     
-                        let markerPopup = new mapboxgl.Popup({offset: 25})
-                        .setHTML(`<b>${request.title} </b> by ${request.author.username} <br> 
-                                    Details: ${request.description}<br>
-                                    Volunteers:${request.volunteers.length} <br>`
-                                    + deleteHtml + volunteerHtml + linkHtml)
-                        const marker = new mapboxgl.Marker((userId == request.author._id) ? { color: "red" } : { color: "#5423F6" })
-                            .setLngLat([request.longitude,request.latitude])
-                            .setPopup(markerPopup)
-                            .addTo(map)
-                    }
-                })
-            </script>
-        </div>
-        
-          
+                    </script>
+                    <script src="../scripts/mapboxConfig.js"></script>
+                    <script>
+                            map.on('load', () => {
+                                for (let request of requests) {
+                                    const deleteHtml = (userId == request.author._id) ? 
+                                        `<form action="/${request._id}/delete?_method=DELETE" method=POST>
+                                            <button class="btn btn-danger btn-sm" style="padding: 0.5px;">Delete</button>  
+                                        </form>` : ``
+                                    const volunteerHtml = (userId != request.author._id && userId != -1  )  ? 
+                                        `<br>
+                                        <form action="/${request._id}/volunteer?_method=PUT" method=POST>
+                                            <button class="btn btn-info btn-sm" style="padding: 0.5px;">Volunteer</button>  
+                                        </form>` : ``
+                                    const linkHtml = `<a href="/requests/${request._id}">More Info </a>`     
+                                    let markerPopup = new mapboxgl.Popup({offset: 25})
+                                    .setHTML(`<b>${request.title} </b> by ${request.author.username} <br> 
+                                                Details: ${request.description}<br>
+                                                Volunteers:${request.volunteers.length} <br>`
+                                                 + volunteerHtml + linkHtml)
+                                    const marker = new mapboxgl.Marker((userId == request.author._id) ? { color: "red" } : { color: "#5423F6" })
+                                        .setLngLat([request.longitude,request.latitude])
+                                        .setPopup(markerPopup)
+                                        .addTo(map)
+                                    
+                                }
+                            })
+                    </script>
+                </div>
+
+
 </body>
 
 </html>

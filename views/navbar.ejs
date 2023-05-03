@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-custom">
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-custom py-1 sticky-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Tasukete | 助けて | HelpOut</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -10,37 +10,44 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="/">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/new">Make a request</a>
+        <li class="nav-item ">
+          <a class="nav-link active" href="/new">Make a request</a>
         </li>
-        <% if(!currentUser) { %>
-          <li class="nav-item">
-            <a href="/google/login" class="nav-link">Sign in with Google</a>
-          </li>
-        <%} else { %>
-          <li>
-            <img src="<%= currentUser.picture %>" class="profile-img" referrerpolicy="no-referrer" />
-          </li>
-          <li class="nav-item">
-            <a href="/" class="nav-link"> <%= currentUser.username %></a>
-          </li>
-          <li class="nav-item">
-            <a href="/google/logout" class="nav-link">Logout</a>
-          </li>
-        <% } %>
+        <li class="nav-item ">
+          <a class="nav-link active" href="/faq">FAQ</a>
+        </li>
       </ul>
+        <ul class="navbar-nav ms-auto">
+          <% if(!currentUser) { %>
+            <li class="nav-item">
+              <a href="/google/login" class="nav-link active">Sign in with Google</a>
+            </li>
+          <%} else { %>
+            <li>
+              <img src="<%= currentUser.picture %>" class="profile-img" referrerpolicy="no-referrer" />
+            </li>
+            <li class="nav-item">
+              <a href="/" class="nav-link active"> <%= currentUser.username %></a>
+            </li>
+            <li class="nav-item">
+              <a href="/google/logout" class="nav-link active">Logout</a>
+            </li>
+          <% } %>
+        </ul>
+        
+      
     </div>
   </div>
 </nav>
 
 <% if(success && success.length) { %>
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
+  <div class="alert alert-success alert-dismissible fade show my-alert" role="alert">
       <%= success %>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <% } %>
 <% if(error && error.length) { %>
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <div class="alert alert-danger alert-dismissible fade show my-alert" role="alert">
     <%= error %>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
