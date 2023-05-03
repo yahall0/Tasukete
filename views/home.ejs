@@ -51,10 +51,10 @@
                                         </form>` : ``
                                     const linkHtml = `<a href="/requests/${request._id}">More Info </a>`     
                                     let markerPopup = new mapboxgl.Popup({offset: 25})
-                                    .setHTML(`<b>${request.title} </b> by ${request.author.username} <br> 
-                                                Details: ${request.description}<br>
+                                    .setHTML(`<b>${request.title} </b><br> <small class="text-muted">by ${request.author.username}</small> <br> 
+                                                Details: ${request.description.substr(0, 30)}...<br>
                                                 Volunteers:${request.volunteers.length} <br>`
-                                                 + volunteerHtml + linkHtml)
+                                                  + linkHtml)
                                     const marker = new mapboxgl.Marker((userId == request.author._id) ? { color: "red" } : { color: "#5423F6" })
                                         .setLngLat([request.longitude,request.latitude])
                                         .setPopup(markerPopup)
