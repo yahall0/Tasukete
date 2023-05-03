@@ -29,7 +29,8 @@
                         class="card-img-top"> </a>
                     <div class="card-body">
                         <p class="card-text"><small class="text-muted">Click on image to navigate to location</small></p>
-                        <h5 class="card-title"><%= request.title %></h5>
+                        <h5 class="card-title"><strong><%= request.title %></strong></h5>
+                        <p class="card-text"><small class="text-muted">By: <%= request.author.username %></small></p>
                         <p class="card-text"><%= request.description %></p>
                         <p class="card-text"><small class="text-muted">Time: <%= request.date %></small></p>
                         <p class="card-text"><small class="text-muted">
@@ -62,7 +63,11 @@
                         People Who volunteered: 
                     </button>
                     <% for(let vol of request.volunteers) { %>
-                        <button type="button" class="list-group-item list-group-item-action"><%= vol.UserID.username %> <br> <small class="text-muted"><%= vol.UserID.email %></small> </button>
+                        <button type="button" class="list-group-item list-group-item-action"><%= vol.UserID.username %> <br> 
+                            <% if(currentUser != null && (currentUser._id.toString() == request.author._id || currentUser._id == vol.UserID._id)) { %>
+                            <small class="text-muted"><%= vol.UserID.email %></small> 
+                            <% } %> 
+                        </button>
                     <% } %>    
                   </div>
             </div>

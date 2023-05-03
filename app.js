@@ -119,7 +119,6 @@ app.get("/", async (req, res) => {
 //request page
 app.get("/requests/:requestId", async (req, res) => {
     const id = req.params.requestId.trim()
-    const user = await User.findOne({ googleID: req.user.id })
     const request = await Request.findById(id).populate('author').populate(
         {
             path: "volunteers",
@@ -130,12 +129,14 @@ app.get("/requests/:requestId", async (req, res) => {
         }
     );
     let reported = false
-    if(request.reports.includes(user._id))
+    if(req.user !== undefined)
     {
-        reported = true
+        const user = await User.findOne({ googleID: req.user.id })
+        if(request.reports.includes(user._id))
+        {
+            reported = true
+        }
     }
-    console.log(request.reports)
-    console.log(user._id)
     res.render("request.ejs", { mapboxToken, request , reported})
 })
 
