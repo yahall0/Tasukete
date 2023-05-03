@@ -1,5 +1,4 @@
-if(process.env.NODE_ENV !== 'production')
-{
+if (process.env.NODE_ENV !== 'production') {
     require("dotenv").config()
 }
 
@@ -16,9 +15,12 @@ const User = require("./models/user")
 const flash = require("connect-flash")
 const methodOverride = require("method-override")
 require("./utils/passportGoogle")
-const {isLoggedIn} = require("./utils/middleware")
+const { isLoggedIn } = require("./utils/middleware")
 const Request = require("./models/request")
 const Volunteer = require("./models/volunteer")
+// const swearDetect = require("swearjar")
+const badWords = require("bad-words")
+swearDetect = new badWords()
 
 
 app = express()
@@ -72,9 +74,8 @@ app.use(passport.session())
 
 app.use(async (req, res, next) => {
     res.locals.currentUser = null
-    if(req.user)
-    {
-        const user = await User.findOne({googleID: req.user.id})
+    if (req.user) {
+        const user = await User.findOne({ googleID: req.user.id })
         res.locals.currentUser = user// Session info of the user from passport
     }
     res.locals.success = req.flash("success")
@@ -82,15 +83,15 @@ app.use(async (req, res, next) => {
     next()
 })
 
-app.get("/google/login", passport.authenticate('google', {scope: ['profile', 'email']}), (req, res, next) => {
+app.get("/google/login", passport.authenticate('google', { scope: ['profile', 'email'] }), (req, res, next) => {
     req.session.save()
 })
 
-app.get("/oauth2/redirect/google", passport.authenticate('google', {keepSessionInfo: true}), 
+app.get("/oauth2/redirect/google", passport.authenticate('google', { keepSessionInfo: true }),
     (req, res) => {
         req.flash("success", "Welcome!")
         res.redirect('/')
-    }    
+    }
 )
 
 app.get("/google/logout", (req, res, next) => {
@@ -107,18 +108,18 @@ app.get("/google/logout", (req, res, next) => {
 const mapboxToken = process.env.MAPBOX_TOKEN
 app.get("/", async (req, res) => {
     const requests = await Request.find({}).populate('author')
-    console.log(requests)
     let info = ""
     /*if(req.user != null)
     {
         info = "Note: Red Markers are your requests:p"
     }*/
-    res.render("home.ejs", {mapboxToken, requests, info})
+    res.render("home.ejs", { mapboxToken, requests, info })
 })
 
 //request page
 app.get("/requests/:requestId", async (req, res) => {
     const id = req.params.requestId.trim()
+    const user = await User.findOne({ googleID: req.user.id })
     const request = await Request.findById(id).populate('author').populate(
         {
             path: "volunteers",
@@ -128,42 +129,55 @@ app.get("/requests/:requestId", async (req, res) => {
             }
         }
     );
-    res.render("request.ejs", {mapboxToken, request})
+    let reported = false
+    if(request.reports.includes(user._id))
+    {
+        reported = true
+    }
+    console.log(request.reports)
+    console.log(user._id)
+    res.render("request.ejs", { mapboxToken, request , reported})
 })
 
 //New Help request
 //New request forum
 app.get("/new", isLoggedIn, (req, res) => {
-    res.render("new.ejs", {mapboxToken})
+    res.render("new.ejs", { mapboxToken })
 })
 
 //receive request
-app.post("/new", isLoggedIn,async (req, res) => {
-    const author = await User.findOne({googleID: req.user.id})
+app.post("/new", isLoggedIn, async (req, res) => {
+    const author = await User.findOne({ googleID: req.user.id })
     const newReq = new Request({
         title: req.body.request.title,
         longitude: req.body.request.longitude,
         latitude: req.body.request.latitude,
         date: req.body.request.date,
-        description: req.body.request.description,  
+        description: req.body.request.description,
         author: author._id
     })
+    if (swearDetect.isProfane(newReq.title + newReq.description)) {
+        console.log("detected")
+        const error = "Profanity or explicit text in the title and/or description will not be accepted";
+        return res.render("new.ejs", {mapboxToken, error});
+    }
+    console.log(swearDetect.profane(newReq.title + " " + newReq.description))
     await newReq.save()
     res.redirect("/")
+ 
 })
 
 //delete a request 
-app.delete("/:requestId/delete", isLoggedIn, async(req, res) => {
+app.delete("/:requestId/delete", isLoggedIn, async (req, res) => {
     const request = await Request.findById(req.params.requestId).populate('author')
     console.log(req.user.id)
     console.log(request.author.googleID)
-    if(req.user.id == request.author.googleID)
-    {
+    if (req.user.id == request.author.googleID) {
         console.log(req.params.requestId)
-        await Request.deleteOne({_id: req.params.requestId})
+        await Request.deleteOne({ _id: req.params.requestId })
         res.redirect("/")
     }
-    else{
+    else {
         res.send("Unauthorised Request")
     }
 })
@@ -171,11 +185,10 @@ app.delete("/:requestId/delete", isLoggedIn, async(req, res) => {
 //volunteer for a request
 app.put("/:requestId/volunteer", isLoggedIn, async (req, res) => {
     const request = await Request.findById(req.params.requestId).populate('author')
-    const user = await User.findOne({googleID: req.user.id})
-    console.log(user)
+    const user = await User.findOne({ googleID: req.user.id })
     const volunteer = new Volunteer({
         UserID: user._id,
-        requestId: request._id 
+        requestId: request._id
     })
     request.volunteers.push(volunteer)
     user.volunteers.push(volunteer)
@@ -187,8 +200,32 @@ app.put("/:requestId/volunteer", isLoggedIn, async (req, res) => {
 })
 
 //FAQ Page
-app.get("/faq", (req, res) =>  {
+app.get("/faq", (req, res) => {
     res.render("faq.ejs")
+})
+
+//report a request
+app.put("/:requestId/report", isLoggedIn, async (req, res) => {
+    const id = req.params.requestId.trim()
+    const request = await Request.findById(id).populate('author').populate(
+        {
+            path: "volunteers",
+            populate: {
+                path: 'UserID',
+                model: 'User'
+            }
+        }
+    );
+    const user = await User.findOne({ googleID: req.user.id })
+    console.log(user)
+    request.reports.push(user)
+    if(request.reports.length >= 6)
+    {
+        Request.deleteOne(id)
+        res.redirect("/")
+    }
+    request.save()
+    res.redirect(`/requests/${req.params.requestId}`)
 })
 
 //If page not found

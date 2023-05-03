@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bad-words": "^3.0.4",
     "body-parser": "^1.20.2",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^5.0.0",
@@ -20,6 +21,7 @@
     "method-override": "^3.0.0",
     "mongoose": "^7.0.3",
     "passport": "^0.6.0",
-    "passport-google-oauth2": "^0.2.0"
+    "passport-google-oauth2": "^0.2.0",
+    "swearjar": "^0.2.0"
   }
 }

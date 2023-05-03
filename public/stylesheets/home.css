@@ -10,7 +10,6 @@ body {
 }
 
 .map-container {
-  margin-top: 2vh;
   max-width: 100%;
 }
 
@@ -20,7 +19,7 @@ body {
 
 .navbar-custom {
   background-color: rgb(255, 81, 81) !important;
-  margin-bottom: 2vh;
+  margin-bottom: 0.5vh;
   color: rgb(173, 173, 173);
   text-shadow: 5px;
 }
