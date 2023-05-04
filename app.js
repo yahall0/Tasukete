@@ -18,9 +18,8 @@ require("./utils/passportGoogle")
 const { isLoggedIn } = require("./utils/middleware")
 const Request = require("./models/request")
 const Volunteer = require("./models/volunteer")
-// const swearDetect = require("swearjar")
+const swearDetect = require("swearjar")
 const badWords = require("bad-words")
-swearDetect = new badWords()
 
 
 app = express()
@@ -157,12 +156,10 @@ app.post("/new", isLoggedIn, async (req, res) => {
         description: req.body.request.description,
         author: author._id
     })
-    if (swearDetect.isProfane(newReq.title + newReq.description)) {
-        console.log("detected")
+    if (swearDetect.profane(newReq.title + " " + newReq.description)) {
         const error = "Profanity or explicit text in the title and/or description will not be accepted";
         return res.render("new.ejs", {mapboxToken, error});
     }
-    console.log(swearDetect.profane(newReq.title + " " + newReq.description))
     await newReq.save()
     res.redirect("/")
  
@@ -171,10 +168,7 @@ app.post("/new", isLoggedIn, async (req, res) => {
 //delete a request 
 app.delete("/:requestId/delete", isLoggedIn, async (req, res) => {
     const request = await Request.findById(req.params.requestId).populate('author')
-    console.log(req.user.id)
-    console.log(request.author.googleID)
     if (req.user.id == request.author.googleID) {
-        console.log(req.params.requestId)
         await Request.deleteOne({ _id: req.params.requestId })
         res.redirect("/")
     }
@@ -218,7 +212,6 @@ app.put("/:requestId/report", isLoggedIn, async (req, res) => {
         }
     );
     const user = await User.findOne({ googleID: req.user.id })
-    console.log(user)
     request.reports.push(user)
     if(request.reports.length >= 6)
     {
